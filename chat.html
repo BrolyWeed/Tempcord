@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #fff;
+    }
+
+    header {
+      background-color: #FFC0CB;
+    }
+
+    .user1 {
+      background-color: #ffeef2;
+    }
+
+    .user2 {
+      background-color: #ffcce5;
+    }
+
+    form button {
+      background-color: #FFC0CB;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <header>
+      <div class="user-select">
+        <label for="user">You are: </label>
+        <select id="user">
+          <option value="user1">🧑 Person 1</option>
+          <option value="user2">👩 Person 2</option>
+        </select>
+      </div>
+    </header>
+
+    <div id="chat-log" class="chat-log"></div>
+
+    <form id="chat-form">
+      <input type="text" id="message" placeholder="Type your message..." required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
