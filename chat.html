@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Firebase App (core) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
+  <!-- Firebase Realtime Database -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat</title>
   <link rel="stylesheet" href="style.css" />
+
   <style>
     body {
       background-color: #fff;
@@ -26,27 +33,58 @@
       background-color: #FFC0CB;
     }
   </style>
+
+  <!-- Firebase configuration -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
+      authDomain: "tempcord-741a4.firebaseapp.com",
+      databaseURL: "https://tempcord-741a4-default-rtdb.firebaseio.com",
+      projectId: "tempcord-741a4",
+      storageBucket: "tempcord-741a4.firebasestorage.app",
+      messagingSenderId: "707603521492",
+      appId: "1:707603521492:web:3b61fb093ccb02872a4041"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
 </head>
 <body>
-  <div class="chat-container">
-    <header>
-      <div class="user-select">
-        <label for="user">You are: </label>
-        <select id="user">
-          <option value="user1">💜 BrolyWeed</option>
-          <option value="user2">🖤 CookyCharacter</option>
-        </select>
-      </div>
-    </header>
+  <header>
+    <h1>Chat Room</h1>
+  </header>
 
-    <div id="chat-log" class="chat-log"></div>
-
-    <form id="chat-form">
-      <input type="text" id="message" placeholder="Type your message..." required />
+  <main>
+    <input id="nameInput" placeholder="Your name" />
+    <form onsubmit="sendMessage(event)">
+      <input id="messageInput" placeholder="Type your message..." />
       <button type="submit">Send</button>
     </form>
-  </div>
+    <div id="messages"></div>
+  </main>
 
-  <script src="script.js"></script>
+  <script>
+    const messagesRef = database.ref("messages");
+
+    function sendMessage(e) {
+      e.preventDefault();
+      const name = document.getElementById("nameInput").value.trim();
+      const text = document.getElementById("messageInput").value.trim();
+      if (name && text) {
+        messagesRef.push({ name, text });
+        document.getElementById("messageInput").value = "";
+      }
+    }
+
+    messagesRef.on("child_added", (snapshot) => {
+      const message = snapshot.val();
+      const div = document.createElement("div");
+      div.classList.add(message.name === "User1" ? "user1" : "user2");
+      div.textContent = `${message.name}: ${message.text}`;
+      document.getElementById("messages").appendChild(div);
+    });
+  </script>
 </body>
 </html>
