@@ -1,61 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Chat</title>
+  <link rel="stylesheet" href="style.css" />
+
   <!-- Firebase App (core) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-
   <!-- Firebase Realtime Database -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat</title>
-  <link rel="stylesheet" href="style.css" />
-
-  <style>
-    body {
-      background-color: #fff;
-    }
-
-    header {
-      background-color: #FFC0CB;
-    }
-
-    .user1 {
-      background-color: #ffeef2;
-    }
-
-    .user2 {
-      background-color: #ffcce5;
-    }
-
-    form button {
-      background-color: #FFC0CB;
-    }
-  </style>
-
-  <!-- Firebase configuration -->
   <script>
+    // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
       authDomain: "tempcord-741a4.firebaseapp.com",
       databaseURL: "https://tempcord-741a4-default-rtdb.firebaseio.com",
       projectId: "tempcord-741a4",
-      storageBucket: "tempcord-741a4.firebasestorage.app",
+      storageBucket: "tempcord-741a4.appspot.com",
       messagingSenderId: "707603521492",
       appId: "1:707603521492:web:3b61fb093ccb02872a4041"
     };
 
     // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    const messagesRef = database.ref("messages");
+
+    function sendMessage(e) {
+      e.preventDefault();
+      const name = document.getElementById("nameInput").value;
+      const text = document.getElementById("messageInput").value;
+      if (name && text) {
+        messagesRef.push({ name, text });
+        document.getElementById("messageInput").value = "";
+      }
+    }
+
+    window.onload = function () {
+      messagesRef.on("child_added", (snapshot) => {
+        const message = snapshot.val();
+        const div = document.createElement("div");
+        div.classList.add(message.name === "User1" ? "user1" : "user2");
+        div.textContent = `${message.name}: ${message.text}`;
+        document.getElementById("messages").appendChild(div);
+      });
+    };
   </script>
 </head>
 <body>
   <header>
-    <h1>Chat Room</h1>
+    <h1>Live Chat</h1>
   </header>
-
   <main>
     <input id="nameInput" placeholder="Your name" />
     <form onsubmit="sendMessage(event)">
@@ -64,27 +61,5 @@
     </form>
     <div id="messages"></div>
   </main>
-
-  <script>
-    const messagesRef = database.ref("messages");
-
-    function sendMessage(e) {
-      e.preventDefault();
-      const name = document.getElementById("nameInput").value.trim();
-      const text = document.getElementById("messageInput").value.trim();
-      if (name && text) {
-        messagesRef.push({ name, text });
-        document.getElementById("messageInput").value = "";
-      }
-    }
-
-    messagesRef.on("child_added", (snapshot) => {
-      const message = snapshot.val();
-      const div = document.createElement("div");
-      div.classList.add(message.name === "User1" ? "user1" : "user2");
-      div.textContent = `${message.name}: ${message.text}`;
-      document.getElementById("messages").appendChild(div);
-    });
-  </script>
 </body>
 </html>
