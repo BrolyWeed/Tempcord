@@ -3,23 +3,151 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat</title>
+  <title>Tempcord</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Firebase Scripts -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #FFC0CB;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #fff;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #FF69B4;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      background-color: #fff;
+      border-top: 2px solid #FFB6C1;
+      border-bottom: 2px solid #FFB6C1;
+    }
+
+    .message {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 0.7rem;
+    }
+
+    .message-content {
+      background-color: #ffeef2;
+      padding: 0.6rem 1rem;
+      border-radius: 1.2rem;
+      max-width: 70%;
+    }
+
+    form {
+      display: flex;
+      padding: 1rem;
+      background-color: #fff;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.7rem;
+      border: 1px solid #ddd;
+      border-radius: 1rem;
+      margin-right: 0.5rem;
+    }
+
+    button {
+      padding: 0.7rem 1.2rem;
+      background-color: #FF69B4;
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ff85c1;
+    }
+  </style>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
+
 <body>
-  <header>
-    <h1>Private Chat</h1>
-  </header>
-  <main>
-    <div class="chat-box" id="chatBox"></div>
-    <form id="chatForm">
-      <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" required>
-      <button type="submit">Send</button>
-    </form>
-  </main>
-  <script src="script.js"></script>
+  <header>🌸 Tempcord</header>
+
+  <div id="chat-box" class="chat-box"></div>
+
+  <form id="message-form">
+    <input type="text" id="message" placeholder="Type a message..." required />
+    <button type="submit">Send</button>
+  </form>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
+      authDomain: "tempcord-741a4.firebaseapp.com",
+      databaseURL: "https://tempcord-741a4-default-rtdb.firebaseio.com",
+      projectId: "tempcord-741a4",
+      storageBucket: "tempcord-741a4.appspot.com",
+      messagingSenderId: "707603521492",
+      appId: "1:707603521492:web:3b61fb093ccb02872a4041"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const messagesRef = db.ref("messages");
+
+    const chatBox = document.getElementById("chat-box");
+    const messageForm = document.getElementById("message-form");
+    const messageInput = document.getElementById("message");
+
+    // Get username & avatar from localStorage (set this during login)
+    const username = localStorage.getItem("username") || "Anonymous";
+    const avatar = localStorage.getItem("avatar") || "default.jpg";
+
+    messageForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = messageInput.value.trim();
+      if (text !== "") {
+        messagesRef.push({
+          username,
+          avatar,
+          text,
+          timestamp: Date.now()
+        });
+        messageInput.value = "";
+      }
+    });
+
+    messagesRef.limitToLast(100).on("child_added", (snapshot) => {
+      const msg = snapshot.val();
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "message";
+      msgDiv.innerHTML = `
+        <img src="${msg.avatar}" class="avatar" alt="avatar" />
+        <div class="message-content">
+          <strong>${msg.username}</strong>: ${msg.text}
+        </div>
+      `;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
 </body>
 </html>
