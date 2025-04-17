@@ -2,74 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Firebase -->
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <header>
-    <h1>Pastel Chat 💬</h1>
+    <h1>Private Chat</h1>
   </header>
-
   <main>
-    <div id="chat-container">
-      <div id="messages"></div>
-
-      <form id="chatForm">
-        <input id="nameInput" placeholder="Your name" readonly />
-        <input id="messageInput" placeholder="Type a message..." />
-        <button type="submit">Send</button>
-      </form>
-    </div>
+    <div class="chat-box" id="chatBox"></div>
+    <form id="chatForm">
+      <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" required>
+      <button type="submit">Send</button>
+    </form>
   </main>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
-      authDomain: "tempcord-741a4.firebaseapp.com",
-      databaseURL: "https://tempcord-741a4-default-rtdb.firebaseio.com",
-      projectId: "tempcord-741a4",
-      storageBucket: "tempcord-741a4.appspot.com",
-      messagingSenderId: "707603521492",
-      appId: "1:707603521492:web:3b61fb093ccb02872a4041"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const nameInput = document.getElementById("nameInput");
-    const messageInput = document.getElementById("messageInput");
-    const messages = document.getElementById("messages");
-    const chatForm = document.getElementById("chatForm");
-
-    const savedUser = localStorage.getItem("chatUser");
-    if (!savedUser) {
-      alert("No user found. Redirecting to login...");
-      window.location.href = "password.html";
-    } else {
-      nameInput.value = savedUser;
-    }
-
-    chatForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = nameInput.value;
-      const text = messageInput.value;
-      if (text.trim() !== "") {
-        const timestamp = Date.now();
-        db.ref("messages").push({ name, text, timestamp });
-        messageInput.value = "";
-      }
-    });
-
-    db.ref("messages").limitToLast(100).on("child_added", (snapshot) => {
-      const msg = snapshot.val();
-      const div = document.createElement("div");
-      div.classList.add(msg.name === "User1" ? "user1" : "user2");
-      div.textContent = `${msg.name}: ${msg.text}`;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
