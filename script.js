@@ -1,3 +1,4 @@
+// Initialize Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
   authDomain: "tempcord-741a4.firebaseapp.com",
@@ -10,35 +11,24 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const messagesRef = db.ref("messages");
 
-const user = localStorage.getItem("currentUser") || "Unknown";
-const chatBox = document.getElementById("chatBox");
-const chatForm = document.getElementById("chatForm");
-const messageInput = document.getElementById("messageInput");
+const chatBox = document.getElementById("chat-box");
+const messageForm = document.getElementById("message-form");
+const messageInput = document.getElementById("message");
 
-function addMessage(user, text) {
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add("message");
+// This should be set dynamically later
+let username = localStorage.getItem("username") || "Anonymous";
+let avatar = localStorage.getItem("avatar") || "default.jpg";
 
-  const img = document.createElement("img");
-  img.src = user === "BrolyWeed" ? "BrolyWeed.jpg" : "Cookychara.jpg";
-
-  const span = document.createElement("span");
-  span.textContent = `${user}: ${text}`;
-
-  messageDiv.appendChild(img);
-  messageDiv.appendChild(span);
-  chatBox.appendChild(messageDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-chatForm.addEventListener("submit", (e) => {
+// Send message
+messageForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const text = messageInput.value.trim();
-  if (text) {
-    const newMessageRef = db.ref("messages").push();
-    newMessageRef.set({
-      user,
+  if (text !== "") {
+    messagesRef.push({
+      username,
+      avatar,
       text,
       timestamp: Date.now()
     });
@@ -46,7 +36,17 @@ chatForm.addEventListener("submit", (e) => {
   }
 });
 
-db.ref("messages").on("child_added", (snapshot) => {
+// Listen for new messages
+messagesRef.limitToLast(100).on("child_added", (snapshot) => {
   const msg = snapshot.val();
-  addMessage(msg.user, msg.text);
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "message";
+  msgDiv.innerHTML = `
+    <img src="${msg.avatar}" class="avatar" alt="avatar" />
+    <div class="message-content">
+      <strong>${msg.username}</strong>: ${msg.text}
+    </div>
+  `;
+  chatBox.appendChild(msgDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
 });
