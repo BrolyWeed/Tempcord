@@ -117,22 +117,10 @@
     const messageForm = document.getElementById("message-form");
     const messageInput = document.getElementById("message");
 
-    // 🔐 Temporary login prompt if not already stored
-    if (!localStorage.getItem("username")) {
-      const pw = prompt("Enter your password to continue:");
-
-      if (pw === "Ilovejames69!") {
-        localStorage.setItem("username", "BrolyWeed");
-        localStorage.setItem("avatar", "Brolyweed.jpg");
-      } else if (pw === "Ilovecaseylaymon69!") {
-        localStorage.setItem("username", "CookyCharacter");
-        localStorage.setItem("avatar", "Cookychara.jpg");
-      } else {
-        alert("Wrong password. You'll be anonymous.");
-        localStorage.setItem("username", "Anonymous");
-        localStorage.setItem("avatar", "default.jpg");
-      }
-    }
+   // 🔒 Redirect to login if user is not authenticated
+if (!localStorage.getItem("username") || !localStorage.getItem("avatar")) {
+  window.location.href = "password.html";
+}
 
     const username = localStorage.getItem("username");
     const avatar = localStorage.getItem("avatar");
