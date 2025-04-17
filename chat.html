@@ -117,9 +117,25 @@
     const messageForm = document.getElementById("message-form");
     const messageInput = document.getElementById("message");
 
-    // Get username & avatar from localStorage (set this during login)
-    const username = localStorage.getItem("username") || "Anonymous";
-    const avatar = localStorage.getItem("avatar") || "default.jpg";
+    // 🔐 Temporary login prompt if not already stored
+    if (!localStorage.getItem("username")) {
+      const pw = prompt("Enter your password to continue:");
+
+      if (pw === "Ilovejames69!") {
+        localStorage.setItem("username", "BrolyWeed");
+        localStorage.setItem("avatar", "Brolyweed.jpg");
+      } else if (pw === "Ilovecaseylaymon69!") {
+        localStorage.setItem("username", "CookyCharacter");
+        localStorage.setItem("avatar", "Cookychara.jpg");
+      } else {
+        alert("Wrong password. You'll be anonymous.");
+        localStorage.setItem("username", "Anonymous");
+        localStorage.setItem("avatar", "default.jpg");
+      }
+    }
+
+    const username = localStorage.getItem("username");
+    const avatar = localStorage.getItem("avatar");
 
     messageForm.addEventListener("submit", (e) => {
       e.preventDefault();
