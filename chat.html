@@ -130,19 +130,26 @@
 <body>
   <header>🌸 Tempcord</header>
 
-  <div class="container">
-    <div class="sidebar">
-      <h3>Friends</h3>
-      <hr style="border: 1px solid #FFB6C1; margin-top: 4px;">
-      <div class="friend">
-        <img id="friend-avatar" src="" alt="friend avatar" />
-        <span id="friend-name"></span>
-      </div>
+ <div class="container">
+  <div class="sidebar">
+    <h3>Friends</h3>
+    <hr style="border: 1px solid #FFB6C1; margin-top: 4px;">
+    <div class="friend">
+      <img id="friend-avatar" src="" alt="friend avatar" />
+      <span id="friend-name"></span>
     </div>
-
-    <div id="chat-box" class="chat-box"></div>
   </div>
 
+  <div class="main-panel">
+    <div id="chat-box" class="chat-box"></div>
+
+    <form id="message-form">
+      <input type="text" id="message" placeholder="Type a message..." required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+  
   <form id="message-form">
     <input type="text" id="message" placeholder="Type a message..." required />
     <button type="submit">Send</button>
