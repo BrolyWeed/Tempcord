@@ -25,6 +25,39 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    .container {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: #fff;
+      border-right: 2px solid #FFB6C1;
+      padding: 1rem;
+    }
+
+    .sidebar h3 {
+      margin: 0;
+      margin-bottom: 0.5rem;
+      color: #FF69B4;
+      font-size: 1.2rem;
+    }
+
+    .friend {
+      display: flex;
+      align-items: center;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    .friend img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      margin-right: 0.6rem;
+    }
+
     .chat-box {
       flex: 1;
       overflow-y: auto;
@@ -36,8 +69,9 @@
 
     .message {
       display: flex;
-      align-items: center;
-      margin-bottom: 0.8rem;
+      align-items: flex-start;
+      margin-bottom: 1.2rem;
+      flex-direction: row;
     }
 
     .avatar {
@@ -52,6 +86,12 @@
       padding: 0.6rem 1rem;
       border-radius: 1.2rem;
       max-width: 70%;
+    }
+
+    .timestamp {
+      font-size: 0.7rem;
+      color: #555;
+      margin-bottom: 0.2rem;
     }
 
     form {
@@ -90,7 +130,18 @@
 <body>
   <header>🌸 Tempcord</header>
 
-  <div id="chat-box" class="chat-box"></div>
+  <div class="container">
+    <div class="sidebar">
+      <h3>Friends</h3>
+      <hr style="border: 1px solid #FFB6C1; margin-top: 4px;">
+      <div class="friend">
+        <img id="friend-avatar" src="" alt="friend avatar" />
+        <span id="friend-name"></span>
+      </div>
+    </div>
+
+    <div id="chat-box" class="chat-box"></div>
+  </div>
 
   <form id="message-form">
     <input type="text" id="message" placeholder="Type a message..." required />
@@ -117,13 +168,53 @@
     const messageForm = document.getElementById("message-form");
     const messageInput = document.getElementById("message");
 
-   // 🔒 Redirect to login if user is not authenticated
-if (!localStorage.getItem("username") || !localStorage.getItem("avatar")) {
-  window.location.href = "password.html";
-}
+    // 🔐 Temporary login prompt if not already stored
+    if (!localStorage.getItem("username")) {
+      const pw = prompt("Enter your password to continue:");
+
+      if (pw === "Ilovejames69!") {
+        localStorage.setItem("username", "BrolyWeed");
+        localStorage.setItem("avatar", "Brolyweed.jpg");
+      } else if (pw === "Ilovecaseylaymon69!") {
+        localStorage.setItem("username", "CookyCharacter");
+        localStorage.setItem("avatar", "Cookychara.jpg");
+      } else {
+        alert("Wrong password. You'll be anonymous.");
+        localStorage.setItem("username", "Anonymous");
+        localStorage.setItem("avatar", "default.jpg");
+      }
+    }
 
     const username = localStorage.getItem("username");
     const avatar = localStorage.getItem("avatar");
+
+    // Show the friend in the sidebar
+    const friendAvatar = document.getElementById("friend-avatar");
+    const friendName = document.getElementById("friend-name");
+
+    if (username === "BrolyWeed") {
+      friendAvatar.src = "Cookychara.jpg";
+      friendName.textContent = "CookyCharacter";
+    } else if (username === "CookyCharacter") {
+      friendAvatar.src = "Brolyweed.jpg";
+      friendName.textContent = "BrolyWeed";
+    } else {
+      friendAvatar.src = "default.jpg";
+      friendName.textContent = "Anonymous";
+    }
+
+    // Determine timezone offset
+    function getFormattedTimestamp(timestamp) {
+      const date = new Date(timestamp);
+      let offset = 0;
+      if (username === "BrolyWeed") offset = -5;
+      else if (username === "CookyCharacter") offset = +1;
+
+      // convert to target timezone
+      const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+      const local = new Date(utc + 3600000 * offset);
+      return local.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
 
     messageForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -143,10 +234,16 @@ if (!localStorage.getItem("username") || !localStorage.getItem("avatar")) {
       const msg = snapshot.val();
       const msgDiv = document.createElement("div");
       msgDiv.className = "message";
+
+      const formattedTime = getFormattedTimestamp(msg.timestamp);
+
       msgDiv.innerHTML = `
         <img src="${msg.avatar}" class="avatar" alt="avatar" />
-        <div class="message-content">
-          <strong>${msg.username}</strong>: ${msg.text}
+        <div>
+          <div class="timestamp">${formattedTime}</div>
+          <div class="message-content">
+            <strong>${msg.username}</strong>: ${msg.text}
+          </div>
         </div>
       `;
       chatBox.appendChild(msgDiv);
