@@ -60,6 +60,20 @@
       margin-right: 0.6rem;
     }
 
+    .sidebar-tab button {
+      padding: 10px;
+      background-color: #FF69B4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .sidebar-tab button:hover {
+      background-color: #ff85c1;
+    }
+
     .main-panel {
       flex: 1;
       display: flex;
@@ -129,6 +143,67 @@
     button:hover {
       background-color: #ff85c1;
     }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      width: 80%;
+      max-width: 500px;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    form div {
+      margin-bottom: 15px;
+    }
+
+    form input,
+    form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    form button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #45a049;
+    }
   </style>
 
   <!-- Firebase -->
@@ -147,6 +222,11 @@
         <img id="friend-avatar" src="" alt="friend avatar" />
         <span id="friend-name"></span>
       </div>
+
+      <!-- Profile Edit Button -->
+      <div class="sidebar-tab" id="edit-profile-tab">
+        <button onclick="openProfileModal()">Edit Profile</button>
+      </div>
     </div>
 
     <div class="main-panel">
@@ -155,6 +235,37 @@
       <form id="message-form">
         <input type="text" id="message" placeholder="Type a message..." required />
         <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div class="modal" id="profile-modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeProfileModal()">&times;</span>
+      <h2>Edit Profile</h2>
+      <form id="profile-form">
+        <div>
+          <label for="profile-picture">Profile Picture</label>
+          <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
+        </div>
+
+        <div>
+          <label for="profile-banner">Profile Banner</label>
+          <input type="file" id="profile-banner" name="profile-banner" accept="image/*">
+        </div>
+
+        <div>
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username">
+        </div>
+
+        <div>
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" placeholder="Tell us something about yourself"></textarea>
+        </div>
+
+        <button type="submit">Save</button>
       </form>
     </div>
   </div>
@@ -206,49 +317,24 @@
   function getFormattedTimestamp(timestamp) {
     const date = new Date(timestamp);
     let offset = 0;
-    if (username === "BrolyWeed") offset = -5;
-    else if (username === "CookyCharacter") offset = +1;
-
-    const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
-    const local = new Date(utc + 3600000 * offset);
-    return local.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (username === "BrolyWeed") {
+      offset = 0; // UTC
+    } else if (username === "CookyCharacter") {
+      offset = -7 * 60; // PST offset
+    }
+    date.setMinutes(date.getMinutes() + offset);
+    return date.toLocaleString();
   }
 
-  // Handle sending messages
-  messageForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const text = messageInput.value.trim();
-    if (text !== "") {
-      messagesRef.push({
-        username,
-        avatar,
-        text,
-        timestamp: Date.now()
-      });
-      messageInput.value = "";
-    }
-  });
+  // Handle profile modal open and close
+  function openProfileModal() {
+    document.getElementById("profile-modal").style.display = "block";
+  }
 
-  // Handle receiving messages
-  messagesRef.limitToLast(100).on("child_added", (snapshot) => {
-    const msg = snapshot.val();
-    const msgDiv = document.createElement("div");
-    msgDiv.className = "message";
-
-    const formattedTime = getFormattedTimestamp(msg.timestamp);
-
-    msgDiv.innerHTML = `
-      <img src="${msg.avatar}" class="avatar" alt="avatar" />
-      <div>
-        <div class="timestamp">${formattedTime}</div>
-        <div class="message-content">
-          <strong>${msg.username}</strong>: ${msg.text}
-        </div>
-      </div>
-    `;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  });
+  function closeProfileModal() {
+    document.getElementById("profile-modal").style.display = "none";
+  }
 </script>
+
 </body>
 </html>
