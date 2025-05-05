@@ -179,15 +179,18 @@
   const messageForm = document.getElementById("message-form");
   const messageInput = document.getElementById("message");
 
-  // 🔐 Redirect if no login data
-  if (!localStorage.getItem("username") || !localStorage.getItem("avatar")) {
-    window.location.href = "password.html";
-  }
-
+  // 🔐 Strict login enforcement
   const username = localStorage.getItem("username");
   const avatar = localStorage.getItem("avatar");
 
-  // Show the friend in the sidebar
+  if (
+    (username !== "BrolyWeed" || avatar !== "Brolyweed.jpg") &&
+    (username !== "CookyCharacter" || avatar !== "Cookychara.jpg")
+  ) {
+    window.location.href = "password.html";
+  }
+
+  // Sidebar setup (friend info)
   const friendAvatar = document.getElementById("friend-avatar");
   const friendName = document.getElementById("friend-name");
 
@@ -197,9 +200,6 @@
   } else if (username === "CookyCharacter") {
     friendAvatar.src = "Brolyweed.jpg";
     friendName.textContent = "BrolyWeed";
-  } else {
-    friendAvatar.src = "default.jpg";
-    friendName.textContent = "Anonymous";
   }
 
   // Timezone offset based on user
@@ -214,6 +214,7 @@
     return local.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
+  // Handle sending messages
   messageForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const text = messageInput.value.trim();
@@ -228,6 +229,7 @@
     }
   });
 
+  // Handle receiving messages
   messagesRef.limitToLast(100).on("child_added", (snapshot) => {
     const msg = snapshot.val();
     const msgDiv = document.createElement("div");
