@@ -159,107 +159,94 @@
     </div>
   </div>
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
-      authDomain: "tempcord-741a4.firebaseapp.com",
-      databaseURL: "https://tempcord-741a4-default-rtdb.firebaseio.com",
-      projectId: "tempcord-741a4",
-      storageBucket: "tempcord-741a4.appspot.com",
-      messagingSenderId: "707603521492",
-      appId: "1:707603521492:web:3b61fb093ccb02872a4041"
-    };
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
+    authDomain: "tempcord-741a4.firebaseapp.com",
+    databaseURL: "https://tempcord-741a4-default-rtdb.firebaseio.com",
+    projectId: "tempcord-741a4",
+    storageBucket: "tempcord-741a4.appspot.com",
+    messagingSenderId: "707603521492",
+    appId: "1:707603521492:web:3b61fb093ccb02872a4041"
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const messagesRef = db.ref("messages");
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const messagesRef = db.ref("messages");
 
-    const chatBox = document.getElementById("chat-box");
-    const messageForm = document.getElementById("message-form");
-    const messageInput = document.getElementById("message");
+  const chatBox = document.getElementById("chat-box");
+  const messageForm = document.getElementById("message-form");
+  const messageInput = document.getElementById("message");
 
-    // 🔐 Temporary login prompt if not already stored
-    if (!localStorage.getItem("username")) {
-      const pw = prompt("Enter your password to continue:");
+  // 🔐 Redirect if no login data
+  if (!localStorage.getItem("username") || !localStorage.getItem("avatar")) {
+    window.location.href = "password.html";
+  }
 
-      if (pw === "Ilovejames69!") {
-        localStorage.setItem("username", "BrolyWeed");
-        localStorage.setItem("avatar", "Brolyweed.jpg");
-      } else if (pw === "Ilovecaseylaymon69!") {
-        localStorage.setItem("username", "CookyCharacter");
-        localStorage.setItem("avatar", "Cookychara.jpg");
-      } else {
-        alert("Wrong password. You'll be anonymous.");
-        localStorage.setItem("username", "Anonymous");
-        localStorage.setItem("avatar", "default.jpg");
-      }
+  const username = localStorage.getItem("username");
+  const avatar = localStorage.getItem("avatar");
+
+  // Show the friend in the sidebar
+  const friendAvatar = document.getElementById("friend-avatar");
+  const friendName = document.getElementById("friend-name");
+
+  if (username === "BrolyWeed") {
+    friendAvatar.src = "Cookychara.jpg";
+    friendName.textContent = "CookyCharacter";
+  } else if (username === "CookyCharacter") {
+    friendAvatar.src = "Brolyweed.jpg";
+    friendName.textContent = "BrolyWeed";
+  } else {
+    friendAvatar.src = "default.jpg";
+    friendName.textContent = "Anonymous";
+  }
+
+  // Timezone offset based on user
+  function getFormattedTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    let offset = 0;
+    if (username === "BrolyWeed") offset = -5;
+    else if (username === "CookyCharacter") offset = +1;
+
+    const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+    const local = new Date(utc + 3600000 * offset);
+    return local.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  messageForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = messageInput.value.trim();
+    if (text !== "") {
+      messagesRef.push({
+        username,
+        avatar,
+        text,
+        timestamp: Date.now()
+      });
+      messageInput.value = "";
     }
+  });
 
-    const username = localStorage.getItem("username");
-    const avatar = localStorage.getItem("avatar");
+  messagesRef.limitToLast(100).on("child_added", (snapshot) => {
+    const msg = snapshot.val();
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "message";
 
-    // Show the friend in the sidebar
-    const friendAvatar = document.getElementById("friend-avatar");
-    const friendName = document.getElementById("friend-name");
+    const formattedTime = getFormattedTimestamp(msg.timestamp);
 
-    if (username === "BrolyWeed") {
-      friendAvatar.src = "Cookychara.jpg";
-      friendName.textContent = "CookyCharacter";
-    } else if (username === "CookyCharacter") {
-      friendAvatar.src = "Brolyweed.jpg";
-      friendName.textContent = "BrolyWeed";
-    } else {
-      friendAvatar.src = "default.jpg";
-      friendName.textContent = "Anonymous";
-    }
-
-    // Determine timezone offset
-    function getFormattedTimestamp(timestamp) {
-      const date = new Date(timestamp);
-      let offset = 0;
-      if (username === "BrolyWeed") offset = -5;
-      else if (username === "CookyCharacter") offset = +1;
-
-      // convert to target timezone
-      const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
-      const local = new Date(utc + 3600000 * offset);
-      return local.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    messageForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const text = messageInput.value.trim();
-      if (text !== "") {
-        messagesRef.push({
-          username,
-          avatar,
-          text,
-          timestamp: Date.now()
-        });
-        messageInput.value = "";
-      }
-    });
-
-    messagesRef.limitToLast(100).on("child_added", (snapshot) => {
-      const msg = snapshot.val();
-      const msgDiv = document.createElement("div");
-      msgDiv.className = "message";
-
-      const formattedTime = getFormattedTimestamp(msg.timestamp);
-
-      msgDiv.innerHTML = `
-        <img src="${msg.avatar}" class="avatar" alt="avatar" />
-        <div>
-          <div class="timestamp">${formattedTime}</div>
-          <div class="message-content">
-            <strong>${msg.username}</strong>: ${msg.text}
-          </div>
+    msgDiv.innerHTML = `
+      <img src="${msg.avatar}" class="avatar" alt="avatar" />
+      <div>
+        <div class="timestamp">${formattedTime}</div>
+        <div class="message-content">
+          <strong>${msg.username}</strong>: ${msg.text}
         </div>
-      `;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
-  </script>
+      </div>
+    `;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+</script>
 </body>
 </html>
