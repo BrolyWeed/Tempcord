@@ -204,6 +204,47 @@
     form button:hover {
       background-color: #45a049;
     }
+
+    /* Profile Customization Sidebar */
+    .profile-sidebar {
+      width: 200px;
+      background-color: #ffe5ec;
+      border-left: 2px solid #FFB6C1;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .profile-sidebar h3 {
+      margin: 0;
+      margin-bottom: 0.5rem;
+      color: #FF69B4;
+      font-size: 1.2rem;
+    }
+
+    .profile-sidebar-tab button {
+      padding: 10px;
+      background-color: #FF69B4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .profile-sidebar-tab button:hover {
+      background-color: #ff85c1;
+    }
+
+    /* Profile Banner */
+    .profile-banner {
+      background-image: url('banner.jpeg');
+      background-size: cover;
+      background-position: center;
+      height: 150px;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+    }
+
   </style>
 
   <!-- Firebase -->
@@ -215,6 +256,7 @@
   <header>Tempcord</header>
 
   <div class="container">
+    <!-- Left Sidebar: Friends -->
     <div class="sidebar">
       <h3>Friends</h3>
       <hr style="border: 1px solid #FFB6C1; margin-top: 4px;">
@@ -222,13 +264,9 @@
         <img id="friend-avatar" src="" alt="friend avatar" />
         <span id="friend-name"></span>
       </div>
-
-      <!-- Profile Edit Button -->
-      <div class="sidebar-tab" id="edit-profile-tab">
-        <button onclick="openProfileModal()">Edit Profile</button>
-      </div>
     </div>
 
+    <!-- Main Panel: Chat Box -->
     <div class="main-panel">
       <div id="chat-box" class="chat-box"></div>
 
@@ -236,6 +274,20 @@
         <input type="text" id="message" placeholder="Type a message..." required />
         <button type="submit">Send</button>
       </form>
+    </div>
+
+    <!-- Right Sidebar: Profile Customization -->
+    <div class="profile-sidebar">
+      <h3>Profile Customization</h3>
+      <hr style="border: 1px solid #FFB6C1; margin-top: 4px;">
+      
+      <!-- Profile Banner -->
+      <div class="profile-banner"></div>
+
+      <!-- Profile Edit Button -->
+      <div class="profile-sidebar-tab">
+        <button onclick="openProfileModal()">Edit Profile</button>
+      </div>
     </div>
   </div>
 
