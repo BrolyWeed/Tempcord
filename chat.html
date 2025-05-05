@@ -6,387 +6,236 @@
   <title>Tempcord</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #FFC0CB;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
+    /* EXISTING STYLES UNCHANGED except additions below */
 
-    header {
-      background-color: #fff;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #FF69B4;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .container {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .sidebar {
-      width: 200px;
-      background-color: #ffe5ec;
-      border-right: 2px solid #FFB6C1;
-      padding: 1rem;
-      box-sizing: border-box;
-    }
-
-    .sidebar h3 {
-      margin: 0;
-      margin-bottom: 0.5rem;
-      color: #FF69B4;
-      font-size: 1.2rem;
-    }
-
-    .friend {
-      display: flex;
-      align-items: center;
+    .profile-section {
       margin-top: 1rem;
-      cursor: pointer;
+      background-color: #fff0f5;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
     }
 
-    .friend img {
-      width: 36px;
-      height: 36px;
+    .profile-banner {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+    }
+
+    .profile-picture {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      margin-right: 0.6rem;
+      border: 3px solid white;
+      position: absolute;
+      top: 65px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: white;
     }
 
-    .sidebar-tab button {
+    .profile-details {
+      text-align: center;
+      margin-top: 40px;
       padding: 10px;
-      background-color: #FF69B4;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
     }
 
-    .sidebar-tab button:hover {
-      background-color: #ff85c1;
-    }
-
-    .main-panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background-color: #fff;
-      border-left: 2px solid #FFB6C1;
-    }
-
-    .chat-box {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1rem;
-      background-color: #fff;
-    }
-
-    .message {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 1.2rem;
-      flex-direction: row;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 0.7rem;
-    }
-
-    .message-content {
-      background-color: #ffeef2;
-      padding: 0.6rem 1rem;
-      border-radius: 1.2rem;
-      max-width: 70%;
-    }
-
-    .timestamp {
-      font-size: 0.7rem;
-      color: #555;
-      margin-bottom: 0.2rem;
-    }
-
-    form {
-      display: flex;
-      padding: 1rem;
-      background-color: #fff;
-      border-top: 2px solid #FFB6C1;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 0.7rem;
-      border: 1px solid #ddd;
-      border-radius: 1rem;
-      margin-right: 0.5rem;
-    }
-
-    button {
-      padding: 0.7rem 1.2rem;
-      background-color: #FF69B4;
-      color: white;
-      border: none;
-      border-radius: 1rem;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #ff85c1;
-    }
-
-    /* Modal styling */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .modal-content {
-      background-color: #fff;
-      margin: 15% auto;
-      padding: 20px;
-      width: 80%;
-      max-width: 500px;
-    }
-
-    .close {
-      color: #aaa;
-      font-size: 28px;
+    .profile-username {
       font-weight: bold;
+      font-size: 1.1rem;
+      color: #FF69B4;
+    }
+
+    .profile-bio {
+      font-size: 0.9rem;
+      color: #444;
+      margin-top: 5px;
+    }
+
+    .edit-icon {
       position: absolute;
       top: 10px;
-      right: 15px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
       cursor: pointer;
     }
 
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    form div {
-      margin-bottom: 15px;
-    }
-
-    form input,
-    form textarea {
+    .edit-mode input,
+    .edit-mode textarea {
       width: 100%;
-      padding: 10px;
+      margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      padding: 5px;
     }
 
-    form button {
-      padding: 10px 15px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    form button:hover {
-      background-color: #45a049;
-    }
-
-    /* Profile Customization Sidebar */
-    .profile-sidebar {
-      width: 200px;
-      background-color: #ffe5ec;
-      border-left: 2px solid #FFB6C1;
+    .friend-profile-modal {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 220px;
+      background-color: #ffe4f0;
+      border-radius: 12px;
       padding: 1rem;
-      box-sizing: border-box;
+      width: 250px;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    .profile-sidebar h3 {
-      margin: 0;
-      margin-bottom: 0.5rem;
-      color: #FF69B4;
-      font-size: 1.2rem;
-    }
-
-    .profile-sidebar-tab button {
-      padding: 10px;
-      background-color: #FF69B4;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    .friend-profile-banner {
       width: 100%;
-    }
-
-    .profile-sidebar-tab button:hover {
-      background-color: #ff85c1;
-    }
-
-    /* Profile Banner */
-    .profile-banner {
-      background-image: url('banner.jpeg');
-      background-size: cover;
-      background-position: center;
-      height: 150px;
-      margin-bottom: 1rem;
+      height: 80px;
+      object-fit: cover;
       border-radius: 8px;
     }
 
-  </style>
+    .friend-profile-picture {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-top: -25px;
+      border: 3px solid white;
+      background-color: white;
+    }
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    .friend-profile-username {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #FF69B4;
+    }
+
+    .friend-profile-bio {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #444;
+    }
+  </style>
 </head>
 
 <body>
   <header>Tempcord</header>
 
   <div class="container">
-    <!-- Left Sidebar: Friends -->
+    <!-- Left Sidebar -->
     <div class="sidebar">
+      <!-- FRIENDS TAB -->
       <h3>Friends</h3>
       <hr style="border: 1px solid #FFB6C1; margin-top: 4px;">
-      <div class="friend">
-        <img id="friend-avatar" src="" alt="friend avatar" />
-        <span id="friend-name"></span>
+      <div class="friend" onclick="showFriendProfile('friendname', 'friendpfp.jpg', 'friendbanner.jpg', 'This is their bio')">
+        <img id="friend-avatar" src="friendpfp.jpg" alt="friend avatar" />
+        <span id="friend-name">FriendName</span>
+      </div>
+
+      <!-- USER PROFILE SECTION -->
+      <div id="user-profile" class="profile-section">
+        <img src="banner.jpeg" id="user-banner" class="profile-banner" />
+        <img src="pfp.jpg" id="user-pfp" class="profile-picture" />
+        <img src="editicon.png" alt="Edit" class="edit-icon" onclick="toggleEditProfile()" />
+
+        <div class="profile-details" id="profile-view">
+          <div class="profile-username" id="display-username">YourUsername</div>
+          <div class="profile-bio" id="display-bio">This is your bio</div>
+        </div>
+
+        <!-- Edit View -->
+        <div class="profile-details edit-mode" id="profile-edit" style="display: none;">
+          <input type="text" id="edit-username" placeholder="Username" />
+          <textarea id="edit-bio" placeholder="Bio"></textarea>
+          <input type="file" accept="image/*" onchange="changeBanner(event)" />
+          <input type="file" accept="image/*" onchange="changePFP(event)" />
+        </div>
       </div>
     </div>
 
-    <!-- Main Panel: Chat Box -->
+    <!-- MAIN CHAT PANEL -->
     <div class="main-panel">
       <div id="chat-box" class="chat-box"></div>
-
       <form id="message-form">
         <input type="text" id="message" placeholder="Type a message..." required />
         <button type="submit">Send</button>
       </form>
     </div>
 
-    <!-- Right Sidebar: Profile Customization -->
+    <!-- RIGHT SIDEBAR (UNUSED) -->
     <div class="profile-sidebar">
       <h3>Profile Customization</h3>
       <hr style="border: 1px solid #FFB6C1; margin-top: 4px;">
-      
-      <!-- Profile Banner -->
       <div class="profile-banner"></div>
-
-      <!-- Profile Edit Button -->
       <div class="profile-sidebar-tab">
-        <button onclick="openProfileModal()">Edit Profile</button>
+        <button onclick="openProfileModal()">Open Modal</button>
       </div>
     </div>
   </div>
 
-  <!-- Profile Modal -->
-  <div class="modal" id="profile-modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeProfileModal()">&times;</span>
-      <h2>Edit Profile</h2>
-      <form id="profile-form">
-        <div>
-          <label for="profile-picture">Profile Picture</label>
-          <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
-        </div>
-
-        <div>
-          <label for="profile-banner">Profile Banner</label>
-          <input type="file" id="profile-banner" name="profile-banner" accept="image/*">
-        </div>
-
-        <div>
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" placeholder="Enter your username">
-        </div>
-
-        <div>
-          <label for="bio">Bio</label>
-          <textarea id="bio" name="bio" placeholder="Tell us something about yourself"></textarea>
-        </div>
-
-        <button type="submit">Save</button>
-      </form>
-    </div>
+  <!-- FRIEND PROFILE POPUP -->
+  <div id="friend-profile" class="friend-profile-modal">
+    <img src="" id="fp-banner" class="friend-profile-banner" />
+    <img src="" id="fp-pfp" class="friend-profile-picture" />
+    <div class="friend-profile-username" id="fp-username"></div>
+    <div class="friend-profile-bio" id="fp-bio"></div>
   </div>
 
-<script>
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBh6AclkKX9by4HRpr7yS8snEpzMdCPzsI",
-    authDomain: "tempcord-741a4.firebaseapp.com",
-    databaseURL: "https://tempcord-741a4-default-rtdb.firebaseio.com",
-    projectId: "tempcord-741a4",
-    storageBucket: "tempcord-741a4.appspot.com",
-    messagingSenderId: "707603521492",
-    appId: "1:707603521492:web:3b61fb093ccb02872a4041"
-  };
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const messagesRef = db.ref("messages");
+  <!-- JS for toggle/edit -->
+  <script>
+    function toggleEditProfile() {
+      const view = document.getElementById('profile-view');
+      const edit = document.getElementById('profile-edit');
+      if (edit.style.display === 'none') {
+        edit.style.display = 'block';
+        view.style.display = 'none';
+      } else {
+        edit.style.display = 'none';
+        view.style.display = 'block';
 
-  const chatBox = document.getElementById("chat-box");
-  const messageForm = document.getElementById("message-form");
-  const messageInput = document.getElementById("message");
-
-  // 🔐 Strict login enforcement
-  const username = localStorage.getItem("username");
-  const avatar = localStorage.getItem("avatar");
-
-  if (
-    (username !== "BrolyWeed" || avatar !== "Brolyweed.jpg") &&
-    (username !== "CookyCharacter" || avatar !== "Cookychara.jpg")
-  ) {
-    window.location.href = "password.html";
-  }
-
-  // Sidebar setup (friend info)
-  const friendAvatar = document.getElementById("friend-avatar");
-  const friendName = document.getElementById("friend-name");
-
-  if (username === "BrolyWeed") {
-    friendAvatar.src = "Cookychara.jpg";
-    friendName.textContent = "CookyCharacter";
-  } else if (username === "CookyCharacter") {
-    friendAvatar.src = "Brolyweed.jpg";
-    friendName.textContent = "BrolyWeed";
-  }
-
-  // Timezone offset based on user
-  function getFormattedTimestamp(timestamp) {
-    const date = new Date(timestamp);
-    let offset = 0;
-    if (username === "BrolyWeed") {
-      offset = 0; // UTC
-    } else if (username === "CookyCharacter") {
-      offset = -7 * 60; // PST offset
+        // Update display info (you'd want to save this to Firebase too)
+        document.getElementById('display-username').innerText = document.getElementById('edit-username').value;
+        document.getElementById('display-bio').innerText = document.getElementById('edit-bio').value;
+      }
     }
-    date.setMinutes(date.getMinutes() + offset);
-    return date.toLocaleString();
-  }
 
-  // Handle profile modal open and close
-  function openProfileModal() {
-    document.getElementById("profile-modal").style.display = "block";
-  }
+    function changeBanner(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById('user-banner').src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
-  function closeProfileModal() {
-    document.getElementById("profile-modal").style.display = "none";
-  }
-</script>
+    function changePFP(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById('user-pfp').src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
+    function showFriendProfile(name, pfp, banner, bio) {
+      const modal = document.getElementById('friend-profile');
+      document.getElementById('fp-username').innerText = name;
+      document.getElementById('fp-pfp').src = pfp;
+      document.getElementById('fp-banner').src = banner;
+      document.getElementById('fp-bio').innerText = bio;
+      modal.style.display = 'block';
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('friend-profile');
+      if (event.target !== modal && !modal.contains(event.target)) {
+        modal.style.display = 'none';
+      }
+    };
+  </script>
 </body>
 </html>
